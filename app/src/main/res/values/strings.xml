@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Maintenance Inspection</string>
+    <string name="streamlined_inspections">Streamlined Inspections</string>
+    <string name="desc_1">Say goodbye to cumbersome paper forms and embrace efficiency with our Maintenance Inspection Android App. Conduct thorough inspections with ease and speed, all from your mobile device.</string>
+    <string name="comprehensive_record_keeping">Comprehensive Record Keeping</string>
+    <string name="desc_2">Maintain accurate records with our digital solution. Easily log, store, and retrieve maintenance data, ensuring nothing slips through the cracks and improving your operational oversight.</string>
+    <string name="desc_3">Generate detailed inspection reports instantly. Our app simplifies the reporting process, allowing you to quickly share findings and updates with your team, enhancing communication and productivity.</string>
+    <string name="instant_reporting">Instant Reporting</string>
+</resources>
