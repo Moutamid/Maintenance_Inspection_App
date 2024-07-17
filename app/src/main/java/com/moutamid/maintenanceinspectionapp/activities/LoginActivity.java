@@ -1,6 +1,7 @@
 package com.moutamid.maintenanceinspectionapp.activities;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -19,6 +20,7 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.google.zxing.Result;
 import com.moutamid.maintenanceinspectionapp.Constants;
+import com.moutamid.maintenanceinspectionapp.MainActivity;
 import com.moutamid.maintenanceinspectionapp.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -43,7 +45,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         scannerView.setOnClickListener(v -> {
-            mCodeScanner.startPreview();
+            // mCodeScanner.startPreview();
+            startActivity(new Intent(this, MainActivity.class));
         });
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {

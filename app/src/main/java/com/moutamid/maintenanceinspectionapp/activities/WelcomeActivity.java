@@ -36,7 +36,7 @@ public class WelcomeActivity extends AppCompatActivity {
         skip = findViewById(R.id.idBtnSkip);
 
         skip.setOnClickListener(v -> {
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
             finish();
         });
@@ -82,6 +82,11 @@ public class WelcomeActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             addDots(size, position);
+            if (position == 2) {
+                binding.idBtnSkip.setText("Next");
+            } else {
+                binding.idBtnSkip.setText("Skip");
+            }
         }
 
         @Override
