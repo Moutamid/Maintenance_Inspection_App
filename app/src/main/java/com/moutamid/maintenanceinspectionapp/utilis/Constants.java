@@ -1,4 +1,4 @@
-package com.moutamid.maintenanceinspectionapp;
+package com.moutamid.maintenanceinspectionapp.utilis;
 
 import android.app.Activity;
 
@@ -15,6 +15,12 @@ import java.net.URL;
 
 public class Constants {
 
+    public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+    public static final String REMEBER_ME = "REMEBER_ME";
+    public static final String STASH_USER = "STASH_USER";
+    public static final String siteID = "siteID";
+    public static final String GET_ALL_SITES = "https://inspectx-host.lunarsoft.co.za/api/Sites/GetAll";
+    public static final String Authenticate = "https://inspectx-host.lunarsoft.co.za/api/TokenAuth/Authenticate";
 	public static void checkApp(Activity activity) {
         String appName = "maintenanceinspectionapp";
 
@@ -71,4 +77,5 @@ public class Constants {
 
         }).start();
     }
+
 }

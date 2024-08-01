@@ -10,7 +10,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.fxn.stash.Stash;
 import com.moutamid.maintenanceinspectionapp.activities.WelcomeActivity;
+import com.moutamid.maintenanceinspectionapp.utilis.Constants;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -20,8 +22,13 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
 
         new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
-            finish();
+            if (!Stash.getBoolean(Constants.REMEBER_ME, false)) {
+                startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
+                finish();
+            } else {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
+            }
         }, 2000);
 
     }

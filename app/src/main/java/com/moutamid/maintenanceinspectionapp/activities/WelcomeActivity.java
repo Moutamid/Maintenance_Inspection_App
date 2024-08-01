@@ -36,8 +36,7 @@ public class WelcomeActivity extends AppCompatActivity {
         skip = findViewById(R.id.idBtnSkip);
 
         skip.setOnClickListener(v -> {
-            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
             finish();
         });
 

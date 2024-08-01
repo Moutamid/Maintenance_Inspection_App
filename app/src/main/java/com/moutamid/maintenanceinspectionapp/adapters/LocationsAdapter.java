@@ -12,16 +12,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.moutamid.maintenanceinspectionapp.R;
 import com.moutamid.maintenanceinspectionapp.activities.AreasActivity;
+import com.moutamid.maintenanceinspectionapp.activities.EquipmentActivity;
 import com.moutamid.maintenanceinspectionapp.models.SitesModel;
-import com.moutamid.maintenanceinspectionapp.utilis.Constants;
 
 import java.util.ArrayList;
 
-public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.SitesVH> {
+public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.SitesVH> {
     Context context;
     ArrayList<SitesModel> list;
 
-    public SitesAdapter(Context context, ArrayList<SitesModel> list) {
+    public LocationsAdapter(Context context, ArrayList<SitesModel> list) {
         this.context = context;
         this.list = list;
     }
@@ -39,7 +39,7 @@ public class SitesAdapter extends RecyclerView.Adapter<SitesAdapter.SitesVH> {
         holder.name.setText(model.siteName);
 
         holder.itemView.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, AreasActivity.class).putExtra(Constants.siteID, model.id));
+            context.startActivity(new Intent(context, EquipmentActivity.class));
         });
 
     }
