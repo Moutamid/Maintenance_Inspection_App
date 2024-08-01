@@ -33,7 +33,8 @@ public class EquipmentActivity extends AppCompatActivity {
         CodeScannerView scannerView = binding.scannerView;
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(result -> runOnUiThread(() -> {
-
+            startActivity(new Intent(this, AllFormsActivity.class));
+            finish();
         }));
         scannerView.setOnClickListener(v -> {
             startActivity(new Intent(this, AllFormsActivity.class));
