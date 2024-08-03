@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.fxn.stash.Stash;
+import com.moutamid.maintenanceinspectionapp.activities.LoginActivity;
 import com.moutamid.maintenanceinspectionapp.activities.WelcomeActivity;
 import com.moutamid.maintenanceinspectionapp.utilis.Constants;
 
@@ -23,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
 
         new Handler().postDelayed(() -> {
             if (!Stash.getBoolean(Constants.REMEBER_ME, false)) {
-                startActivity(new Intent(SplashActivity.this, WelcomeActivity.class));
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                 finish();
             } else {
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));

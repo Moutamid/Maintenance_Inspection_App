@@ -5,10 +5,5 @@ public class InspectionQuestions {
     public int answeredById, ordinal;
     public String answerDate, comment, group, inspectionFormId, inspectionGrade, questionText, id;
 
-    public InspectionQuestions() {
-    }
-
-    public InspectionQuestions(String questionText) {
-        this.questionText = questionText;
-    }
+    public InspectionQuestions() {}
 }

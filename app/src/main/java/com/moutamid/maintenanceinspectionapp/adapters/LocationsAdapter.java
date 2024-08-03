@@ -11,17 +11,19 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.moutamid.maintenanceinspectionapp.R;
+import com.moutamid.maintenanceinspectionapp.activities.AllFormsActivity;
 import com.moutamid.maintenanceinspectionapp.activities.AreasActivity;
 import com.moutamid.maintenanceinspectionapp.activities.EquipmentActivity;
+import com.moutamid.maintenanceinspectionapp.models.LocationModel;
 import com.moutamid.maintenanceinspectionapp.models.SitesModel;
 
 import java.util.ArrayList;
 
 public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.SitesVH> {
     Context context;
-    ArrayList<SitesModel> list;
+    ArrayList<LocationModel> list;
 
-    public LocationsAdapter(Context context, ArrayList<SitesModel> list) {
+    public LocationsAdapter(Context context, ArrayList<LocationModel> list) {
         this.context = context;
         this.list = list;
     }
@@ -34,12 +36,10 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.Site
 
     @Override
     public void onBindViewHolder(@NonNull SitesVH holder, int position) {
-        SitesModel model = list.get(holder.getAdapterPosition());
-
-        holder.name.setText(model.siteName);
-
+        LocationModel model = list.get(holder.getAdapterPosition());
+        holder.name.setText(model.description);
         holder.itemView.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, EquipmentActivity.class));
+            context.startActivity(new Intent(context, AllFormsActivity.class));
         });
 
     }

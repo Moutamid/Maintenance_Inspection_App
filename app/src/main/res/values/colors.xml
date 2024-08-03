@@ -8,4 +8,6 @@
     <color name="green">#00E880</color>
     <color name="greenDark">#00D777</color>
     <color name="greenLight">#99EFC9</color>
+    <color name="grey">#808080</color>
+    <color name="grey2">#EBEBEB</color>
 </resources>

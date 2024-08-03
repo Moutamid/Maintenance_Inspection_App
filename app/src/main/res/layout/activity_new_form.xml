@@ -50,70 +50,128 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_below="@id/toolbar"
-        android:padding="12dp"
-        android:id="@+id/layout">
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/grade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Inspection Grade: N/A" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:progress="0"
+                app:trackThickness="15dp"
+                android:layout_weight="1"
+                app:trackCornerRadius="100dp"
+                app:indicatorTrackGapSize="0dp" />
+
+            <TextView
+                android:id="@+id/indicatorText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:text="0 / 0" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/layout"
+        android:orientation="vertical"
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Select Inspection Grade" />
+            tools:text="@string/lorem" />
 
         <RadioGroup
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/grade"
             android:orientation="horizontal">
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/visual"
+                android:id="@+id/yes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:paddingStart="12dp"
-                android:text="Visual" />
+                android:text="Yes" />
 
             <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/close"
+                android:id="@+id/no"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:checked="true"
                 android:gravity="center_vertical"
                 android:paddingStart="12dp"
-                android:text="Close" />
-
-            <com.google.android.material.radiobutton.MaterialRadioButton
-                android:id="@+id/detailed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical"
-                android:paddingStart="12dp"
-                android:text="Detailed" />
+                android:text="No" />
 
         </RadioGroup>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Comment (Optional)">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:gravity="top"
+                android:inputType="textMultiLine" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/questionRC"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/layout"
-        android:layout_above="@id/submit"
-        tools:listitem="@layout/forms" />
-
-    <Button
-        android:id="@+id/submit"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
-        android:text="Submit" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/previous"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:backgroundTint="@color/blueDark"
+            android:text="Previous" />
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/black"
+            android:backgroundTint="@color/greenDark"
+            android:text="Skip" />
+
+    </LinearLayout>
 
 </RelativeLayout>

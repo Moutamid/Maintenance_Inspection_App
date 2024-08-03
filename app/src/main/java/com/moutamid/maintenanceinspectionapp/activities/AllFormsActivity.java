@@ -30,7 +30,7 @@ public class AllFormsActivity extends AppCompatActivity {
 
 
         binding.newForm.setOnClickListener(v -> {
-            startActivity(new Intent(this, NewFormActivity.class));
+            startActivity(new Intent(this, EquipmentActivity.class));
         });
 
     }

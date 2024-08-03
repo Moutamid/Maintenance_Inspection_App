@@ -49,6 +49,32 @@
 
     </RelativeLayout>
 
+    <LinearLayout
+        android:id="@+id/nothingLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:padding="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:text="Nothing to show"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/grey"
+            android:text="Create new form"/>
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/formRC"
         android:layout_width="match_parent"
