@@ -79,6 +79,7 @@
         android:id="@+id/formRC"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        tools:listitem="@layout/forms"
         android:layout_below="@id/toolbar" />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
@@ -88,7 +89,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_margin="20dp"
-        android:backgroundTint="@color/blueLight"
+        android:gravity="center"
+        android:backgroundTint="@color/green"
         android:text="New Form"
         android:textColor="@color/black" />
 

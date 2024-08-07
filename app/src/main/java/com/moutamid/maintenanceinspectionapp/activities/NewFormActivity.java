@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 public class NewFormActivity extends AppCompatActivity {
     private static final String TAG = "NewFormActivity";
@@ -58,13 +60,21 @@ public class NewFormActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.blue));
 
         equipmentModel = (EquipmentModel) Stash.getObject(Constants.PASS_EQUIPMENT, EquipmentModel.class);
+        inspectionModel = (InspectionModel) Stash.getObject(Constants.PASS_INSPECTION, InspectionModel.class);
+
+        if (inspectionModel != null)
+            grade = inspectionModel.inspectionGrade;
+
         binding.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         if (grade.isEmpty()) {
             showGradeDialog();
+        } else {
+            binding.grade.setText("Inspection Grade: " + grade);
+            getQuestions();
         }
 
-        binding.grade.setOnClickListener(v -> showGradeDialog());
+        // binding.grade.setOnClickListener(v -> showGradeDialog());
 
         binding.submit.setOnClickListener(v -> {
             if (current != inspectionModel.questions.size() - 1) {
@@ -92,7 +102,34 @@ public class NewFormActivity extends AppCompatActivity {
     }
 
     private void submitForm() {
-        Toast.makeText(this, "Submited", Toast.LENGTH_SHORT).show();
+        String url = Constants.SUBMIT_FORM + inspectionModel.id;
+        RequestQueue requestQueue = VolleySingleton.getInstance(this).getRequestQueue();
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("id", inspectionModel.id);
+            JSONArray inspectionQuestions = new JSONArray();
+            for (InspectionQuestions questions : inspectionModel.questions) {
+                JSONObject object = new JSONObject();
+                object.put("id", questions.id);
+                object.put("answer", questions.answer);
+                object.put("answeredById", questions.answeredById);
+                object.put("answerDate", questions.answerDate);
+                object.put("comment", questions.comment);
+                object.put("group", questions.group);
+                object.put("inspectionFormId", questions.inspectionFormId);
+                object.put("inspectionGrade", questions.inspectionGrade);
+                object.put("ordinal", questions.ordinal);
+                object.put("questionText", questions.questionText);
+                inspectionQuestions.put(object);
+            }
+            requestBody.put("inspectionQuestions", inspectionQuestions);
+
+            Log.d(TAG, "submitForm: " + requestBody.toString());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        onBackPressed();
     }
 
     private void showGradeDialog() {
@@ -167,7 +204,25 @@ public class NewFormActivity extends AppCompatActivity {
                             list.add(questions);
                         }
                         list.sort(Comparator.comparingInt(value -> value.ordinal));
-                        inspectionModel = new InspectionModel(id, list);
+                        inspectionModel = new InspectionModel();
+                        inspectionModel.id = id;
+                        inspectionModel.equipmentModel = equipmentModel;
+                        inspectionModel.inspectionGrade = grade;
+                        inspectionModel.questions = list;
+
+                        ArrayList<InspectionModel> recentList = Stash.getArrayList(Constants.RECENT_FORM, InspectionModel.class);
+                        boolean exists = false;
+                        for (int i = 0; i < recentList.size(); i++) {
+                            if (Objects.equals(recentList.get(i).id, inspectionModel.id)) {
+                                recentList.set(i, inspectionModel);
+                                exists = true;
+                                break;
+                            }
+                        }
+                        if (!exists) {
+                            recentList.add(inspectionModel);
+                        }
+                        Stash.put(Constants.RECENT_FORM, recentList);
                         showQuestions(0);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -175,7 +230,14 @@ public class NewFormActivity extends AppCompatActivity {
                 }, error -> {
             error.printStackTrace();
             progressDialog.dismiss();
-            Toast.makeText(this, String.valueOf(error.getLocalizedMessage()), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "getQuestions: " + error.getLocalizedMessage());
+            Log.d(TAG, "getQuestions: " + error.networkResponse.statusCode);
+            Log.d(TAG, "getQuestions: " + error.networkResponse);
+// TODO           Toast.makeText(this,  "Error : " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+//            onBackPressed();
+
+            getDummy();
+
         }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -188,6 +250,53 @@ public class NewFormActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(objectRequest);
+    }
+
+    private void getDummy() {
+        if (inspectionModel == null) {
+            String[] questions_dummy = new String[]{
+                    "Is the equipment free from any visible damage or corrosion?",
+                    "Are all safety guards and covers securely in place?",
+                    "Has the equipment been properly maintained according to the manufacturer's schedule?",
+                    "Is the equipment's electrical wiring intact and free from wear?",
+                    "Are all warning labels and instructions clearly visible and legible?"
+            };
+            ArrayList<InspectionQuestions> list = new ArrayList<>();
+            for (int i = 0; i < questions_dummy.length; i++) {
+                InspectionQuestions questions = new InspectionQuestions();
+                questions.answer = false;
+                questions.answerDate = null;
+                questions.answeredById = 1;
+                questions.comment = "";
+                questions.group = "Dummy Group";
+                questions.inspectionFormId = UUID.randomUUID().toString();
+                questions.inspectionGrade = grade;
+                questions.ordinal = i;
+                questions.questionText = questions_dummy[i];
+                questions.id = UUID.randomUUID().toString();
+                list.add(questions);
+            }
+            list.sort(Comparator.comparingInt(value -> value.ordinal));
+            inspectionModel = new InspectionModel();
+            inspectionModel.id = UUID.randomUUID().toString();
+            inspectionModel.equipmentModel = equipmentModel;
+            inspectionModel.inspectionGrade = grade;
+            inspectionModel.questions = list;
+        }
+        ArrayList<InspectionModel> recentList = Stash.getArrayList(Constants.RECENT_FORM, InspectionModel.class);
+        boolean exists = false;
+        for (int i = 0; i < recentList.size(); i++) {
+            if (Objects.equals(recentList.get(i).id, inspectionModel.id)) {
+                recentList.set(i, inspectionModel);
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            recentList.add(inspectionModel);
+        }
+        Stash.put(Constants.RECENT_FORM, recentList);
+        showQuestions(0);
     }
 
     private void showQuestions(int pos) {
@@ -211,5 +320,16 @@ public class NewFormActivity extends AppCompatActivity {
             binding.indicator.setProgress(pos + 1, true);
             binding.indicatorText.setText((pos + 1) + "/" + inspectionModel.questions.size());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Stash.clear(Constants.PASS_INSPECTION);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }

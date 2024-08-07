@@ -5,10 +5,11 @@ import java.util.ArrayList;
 
 public class InspectionModel {
     public String id;
+    public String inspectionGrade;
+    public EquipmentModel equipmentModel;
     public ArrayList<InspectionQuestions> questions;
 
-    public InspectionModel(String id, ArrayList<InspectionQuestions> questions) {
-        this.id = id;
-        this.questions = questions;
+    public InspectionModel() {
     }
+
 }

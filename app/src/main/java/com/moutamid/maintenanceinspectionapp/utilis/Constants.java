@@ -19,12 +19,17 @@ public class Constants {
     public static final String REMEBER_ME = "REMEBER_ME";
     public static final String PASS_EQUIPMENT = "PASS_EQUIPMENT";
     public static final String STASH_USER = "STASH_USER";
+    public static final String RECENT_FORM = "RECENT_FORM";
+    public static final String PASS_INSPECTION = "PASS_INSPECTION";
     public static final String siteID = "siteID";
+
     public static final String GET_ALL_SITES = "https://inspectx-host.lunarsoft.co.za/api/Sites/GetAll";
     public static final String GET_ALL_LOCATIONS = "https://inspectx-host.lunarsoft.co.za/api/Locations/GetAll";
     public static final String Authenticate = "https://inspectx-host.lunarsoft.co.za/api/TokenAuth/Authenticate";
     public static final String NEW_INSPECTION = "https://inspectx-host.lunarsoft.co.za/api/InspectionForms/NewInspection";
     public static final String GET_EQUIPMENT = "https://inspectx-host.lunarsoft.co.za/api/Equipment/GetBySerialNumber?serialNumber=";
+    public static final String SUBMIT_FORM = "https://inspectx-host.lunarsoft.co.za/api/InspectionForms/Submit/";
+
 	public static void checkApp(Activity activity) {
         String appName = "maintenanceinspectionapp";
 
