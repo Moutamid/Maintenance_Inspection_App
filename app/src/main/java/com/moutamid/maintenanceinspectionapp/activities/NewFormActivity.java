@@ -13,7 +13,9 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
+import android.window.OnBackInvokedDispatcher;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -34,9 +36,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -65,13 +72,13 @@ public class NewFormActivity extends AppCompatActivity {
         if (inspectionModel != null)
             grade = inspectionModel.inspectionGrade;
 
-        binding.back.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        binding.back.setOnClickListener(v -> onBackPressed());
 
         if (grade.isEmpty()) {
             showGradeDialog();
         } else {
             binding.grade.setText("Inspection Grade: " + grade);
-            getQuestions();
+            showQuestions(0);
         }
 
         // binding.grade.setOnClickListener(v -> showGradeDialog());
@@ -81,9 +88,15 @@ public class NewFormActivity extends AppCompatActivity {
                 InspectionQuestions questions = inspectionModel.questions.get(current);
                 questions.answer = binding.yes.isChecked();
                 questions.comment = binding.comment.getEditText().getText().toString();
+                questions.answerDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.getDefault()).format(new Date());
                 inspectionModel.questions.set(current, questions);
                 showQuestions(current + 1);
             } else {
+                InspectionQuestions questions = inspectionModel.questions.get(current);
+                questions.answer = binding.yes.isChecked();
+                questions.comment = binding.comment.getEditText().getText().toString();
+                questions.answerDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.getDefault()).format(new Date());
+                inspectionModel.questions.set(current, questions);
                 submitForm();
             }
         });
@@ -102,34 +115,67 @@ public class NewFormActivity extends AppCompatActivity {
     }
 
     private void submitForm() {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Please Wait");
+        progressDialog.show();
+
         String url = Constants.SUBMIT_FORM + inspectionModel.id;
+
+        UserModel userModel = (UserModel) Stash.getObject(Constants.STASH_USER, UserModel.class);
+
         RequestQueue requestQueue = VolleySingleton.getInstance(this).getRequestQueue();
         JSONObject requestBody = new JSONObject();
         try {
             requestBody.put("id", inspectionModel.id);
-            JSONArray inspectionQuestions = new JSONArray();
-            for (InspectionQuestions questions : inspectionModel.questions) {
-                JSONObject object = new JSONObject();
-                object.put("id", questions.id);
-                object.put("answer", questions.answer);
-                object.put("answeredById", questions.answeredById);
-                object.put("answerDate", questions.answerDate);
-                object.put("comment", questions.comment);
-                object.put("group", questions.group);
-                object.put("inspectionFormId", questions.inspectionFormId);
-                object.put("inspectionGrade", questions.inspectionGrade);
-                object.put("ordinal", questions.ordinal);
-                object.put("questionText", questions.questionText);
-                inspectionQuestions.put(object);
-            }
+            JSONArray inspectionQuestions = getJsonArray(userModel);
             requestBody.put("inspectionQuestions", inspectionQuestions);
-
             Log.d(TAG, "submitForm: " + requestBody.toString());
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        onBackPressed();
+
+        JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.PUT, url, requestBody,
+                response -> {
+                    progressDialog.dismiss();
+                    Log.d(TAG, "Form:  " + response.toString());
+                    Toast.makeText(this, "Form Submitted", Toast.LENGTH_SHORT).show();
+                    onBackPressed();
+                }, error -> {
+            error.printStackTrace();
+            progressDialog.dismiss();
+            Toast.makeText(this, "Error : " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            onBackPressed();
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> map = new HashMap<>();
+                map.put("Content-Type", "application/json");
+                map.put("Accept", "text/plain");
+                String token = "Bearer " + Stash.getString(Constants.ACCESS_TOKEN);
+                map.put("Authorization", token);
+                return map;
+            }
+        };
+        requestQueue.add(objectRequest);
+    }
+
+    private @NonNull JSONArray getJsonArray(UserModel userModel) throws JSONException {
+        JSONArray inspectionQuestions = new JSONArray();
+        for (InspectionQuestions questions : inspectionModel.questions) {
+            JSONObject object = new JSONObject();
+            object.put("id", questions.id);
+            object.put("answer", questions.answer);
+            object.put("answeredById", userModel.userId);
+            object.put("answerDate", questions.answerDate);
+            object.put("comment", questions.comment);
+            object.put("group", questions.group);
+            object.put("inspectionFormId", questions.inspectionFormId);
+            object.put("inspectionGrade", questions.inspectionGrade);
+            object.put("ordinal", questions.ordinal);
+            object.put("questionText", questions.questionText);
+            inspectionQuestions.put(object);
+        }
+        return inspectionQuestions;
     }
 
     private void showGradeDialog() {
@@ -157,7 +203,7 @@ public class NewFormActivity extends AppCompatActivity {
 //                    showQuestions(0);
                 }
             } else {
-                Log.d("Selected Radio Button", "No selection made");
+                Log.d(TAG, "No selection made");
                 Toast.makeText(this, "Please Select Inspection Grade", Toast.LENGTH_SHORT).show();
             }
         });
@@ -209,20 +255,6 @@ public class NewFormActivity extends AppCompatActivity {
                         inspectionModel.equipmentModel = equipmentModel;
                         inspectionModel.inspectionGrade = grade;
                         inspectionModel.questions = list;
-
-                        ArrayList<InspectionModel> recentList = Stash.getArrayList(Constants.RECENT_FORM, InspectionModel.class);
-                        boolean exists = false;
-                        for (int i = 0; i < recentList.size(); i++) {
-                            if (Objects.equals(recentList.get(i).id, inspectionModel.id)) {
-                                recentList.set(i, inspectionModel);
-                                exists = true;
-                                break;
-                            }
-                        }
-                        if (!exists) {
-                            recentList.add(inspectionModel);
-                        }
-                        Stash.put(Constants.RECENT_FORM, recentList);
                         showQuestions(0);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -233,11 +265,8 @@ public class NewFormActivity extends AppCompatActivity {
             Log.d(TAG, "getQuestions: " + error.getLocalizedMessage());
             Log.d(TAG, "getQuestions: " + error.networkResponse.statusCode);
             Log.d(TAG, "getQuestions: " + error.networkResponse);
-// TODO           Toast.makeText(this,  "Error : " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-//            onBackPressed();
-
-            getDummy();
-
+            Toast.makeText(this, "Error : " + error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            onBackPressed();
         }) {
             @Override
             public Map<String, String> getHeaders() {
@@ -331,5 +360,36 @@ public class NewFormActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+        ArrayList<InspectionModel> recentList = Stash.getArrayList(inspectionModel.equipmentModel.locationId, InspectionModel.class);
+        boolean exists = false;
+        boolean allAnswersTrue = true;
+
+        for (InspectionQuestions question : inspectionModel.questions) {
+            if (!question.answer) {
+                allAnswersTrue = false;
+                break;
+            }
+        }
+        int index = 0;
+        for (int i = 0; i < recentList.size(); i++) {
+            if (Objects.equals(recentList.get(i).id, inspectionModel.id)) {
+                recentList.set(i, inspectionModel);
+                exists = true;
+                index = i;
+                break;
+            }
+        }
+
+        if (!allAnswersTrue) {
+            if (!exists) {
+                recentList.add(inspectionModel);
+            }
+        } else {
+            if (exists) {
+                recentList.remove(index);
+            }
+        }
+        Stash.put(inspectionModel.equipmentModel.locationId, recentList);
     }
 }

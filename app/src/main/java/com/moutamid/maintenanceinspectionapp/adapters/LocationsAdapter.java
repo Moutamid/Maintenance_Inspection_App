@@ -39,7 +39,7 @@ public class LocationsAdapter extends RecyclerView.Adapter<LocationsAdapter.Site
         LocationModel model = list.get(holder.getAdapterPosition());
         holder.name.setText(model.description);
         holder.itemView.setOnClickListener(v -> {
-            context.startActivity(new Intent(context, AllFormsActivity.class));
+            context.startActivity(new Intent(context, AllFormsActivity.class).putExtra("ID", model.id));
         });
 
     }
